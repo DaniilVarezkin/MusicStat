@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0 text-center">Регистрация</h1>
+                </div>
+                <div class="card-body">
+                    {{ form_errors(registrationForm) }}
+
+                    {{ form_start(registrationForm, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+
+                    <div class="mb-3">
+                        {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Введите ваш email'}}) }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form_label(registrationForm.plainPassword, 'Пароль', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Введите пароль'}}) }}
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(registrationForm.agreeTerms, 'Я согласен с условиями использования', {'label_attr': {'class': 'form-check-label'}}) }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus"></i> Зарегистрироваться
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <p>Уже есть аккаунт? <a href="{{ path('app_login') }}" class="text-decoration-none">Войдите здесь</a></p>
+                    </div>
+
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
