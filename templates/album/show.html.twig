@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ album.title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="ratio ratio-1x1" style="width: 400px; height: 400px;">
+                        <img src="{{ album.photoUrl }}"
+                             alt="{{ album.title }}"
+                             class="img-fluid object-fit-cover rounded"
+                             style="width: 100%; height: 100%;"
+                             onerror="this.src='https://via.placeholder.com/300x300/cccccc/999999?text=No+Image'">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header align-items-center">
+                        <h1 class="h3 mb-0">{{ album.title }}</h1>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h5 class="text-muted">Оценка критиков</h5>
+                                    <div class="display-4 fw-bold text-primary">
+                                        {{ album.criticScore }}
+                                    </div>
+                                    <small class="text-muted">из 10</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h5 class="text-muted">Оценка пользователей</h5>
+                                    <div class="display-4 fw-bold text-success">
+                                        {{ album.userScore }}
+                                    </div>
+                                    <small class="text-muted">из 10</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h5 class="text-muted">Дата выпуска</h5>
+                            <p class="fs-5">{{ album.releaseDate ? album.releaseDate|date('d.m.Y') : 'Не указана' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_album_index') }}" class="btn btn-outline-secondary">
+                                ← Назад к списку
+                            </a>
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('app_album_edit', {'id': album.id}) }}" class="btn btn-primary">
+                                    Редактировать
+                                </a>
+                                {{ include('album/_delete_form.html.twig') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Секция отзывов #}
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="h5 mb-0">Отзывы</h3>
+                        <span class="badge bg-primary">{{ album.reviews|length }} отзывов</span>
+                    </div>
+
+                    <div class="card-body">
+                        {# Форма добавления отзыва #}
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <div class="mb-4 p-4 bg-light rounded">
+                                <h5 class="mb-3">Добавить отзыв</h5>
+                                {{ form_start(review_form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+
+                                {# Поле оценки #}
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        {{ form_label(review_form.score) }}
+                                        {{ form_widget(review_form.score, {'attr': {'class': 'form-control' ~ (review_form.score.vars.errors|length ? ' is-invalid' : '')}}) }}
+
+                                        {# Отображение ошибок для оценки #}
+                                        {% if review_form.score.vars.errors|length %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in review_form.score.vars.errors %}
+                                                    {{ error.message }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                        {{ form_help(review_form.score) }}
+                                    </div>
+
+                                    {# Поле текста #}
+                                    <div class="col-md-12 mb-3">
+                                        {{ form_label(review_form.text) }}
+                                        {{ form_widget(review_form.text, {'attr': {'class': 'form-control' ~ (review_form.text.vars.errors|length ? ' is-invalid' : '')}}) }}
+
+                                        {# Отображение ошибок для текста #}
+                                        {% if review_form.text.vars.errors|length %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in review_form.text.vars.errors %}
+                                                    {{ error.message }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Оставить отзыв</button>
+                                {{ form_end(review_form) }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <a href="{{ path('app_login') }}" class="alert-link">Войдите</a>, чтобы оставить отзыв
+                            </div>
+                        {% endif %}
+
+                        {# Список отзывов #}
+                        {% if album.reviews|length > 0 %}
+                            <div class="reviews-list">
+                                {% for review in album.reviews %}
+                                    <div class="review-item border-bottom pb-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <strong class="text-primary">{{ review.author.email }}</strong>
+                                                <small class="text-muted ms-2">{{ review.createdAt|date('d.m.Y H:i') }}</small>
+                                            </div>
+                                            <h4><span class="badge bg-primary">{{ review.score }}</span></h4>
+                                        </div>
+                                        <p class="mb-0">{{ review.text }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <p>Пока нет отзывов. Будьте первым!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

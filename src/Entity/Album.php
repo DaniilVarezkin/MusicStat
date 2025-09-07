@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Common\Trait\HasPhotoUrlTrait;
 use App\Repository\AlbumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
 {
+    use HasPhotoUrlTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,13 +21,13 @@ class Album
     private ?string $title = null;
 
     #[ORM\Column]
-    private ?int $criricScore = null;
+    private ?int $criticScore = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private ?int $userScore = 0;
 
     #[ORM\Column]
-    private ?int $userScore = null;
-
-    #[ORM\Column]
-    private ?\DateTime $releaseDate = null;
+    private ?\DateTimeImmutable $releaseDate = null;
 
     /**
      * @var Collection<int, Artist>
@@ -63,14 +65,14 @@ class Album
         return $this;
     }
 
-    public function getCriricScore(): ?int
+    public function getCriticScore(): ?int
     {
-        return $this->criricScore;
+        return $this->criticScore;
     }
 
-    public function setCriricScore(int $criricScore): static
+    public function setCriticScore(int $criticScore): static
     {
-        $this->criricScore = $criricScore;
+        $this->criticScore = $criticScore;
 
         return $this;
     }
@@ -87,12 +89,12 @@ class Album
         return $this;
     }
 
-    public function getReleaseDate(): ?\DateTime
+    public function getReleaseDate(): ?\DateTimeImmutable
     {
         return $this->releaseDate;
     }
 
-    public function setReleaseDate(\DateTime $releaseDate): static
+    public function setReleaseDate(\DateTimeImmutable $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
 

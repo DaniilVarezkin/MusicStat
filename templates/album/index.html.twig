@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Музыкальные альбомы{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Музыкальные альбомы</h1>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="mb-4">
+                <a href="{{ path('app_album_new') }}" class="btn btn-primary">
+                    Создать новый альбом
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="list-group">
+            {% for album in albums %}
+                <a href="{{ path('app_album_show', {'id': album.id}) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <img src="{{ album.photoUrl }}"
+                                 alt="{{ album.title }}"
+                                 class="rounded"
+                                 style="width: 80px; height: 80px; object-fit: cover;"
+                                 onerror="this.src='https://avatars.mds.yandex.net/i?id=81a41e040738cb97a22ed72490ead56b_l-5679112-images-thumbs&n=13'">
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="mb-1">{{ album.title }}</h5>
+                                <small class="text-muted">
+                                    {{ album.releaseDate ? album.releaseDate|date('d.m.Y') : 'Дата не указана' }}
+                                </small>
+                            </div>
+                            <div class="d-flex gap-3 mt-2">
+                                <small class="text-muted">
+                                    <strong>Критики:</strong> {{ album.criticScore }}/10
+                                </small>
+                                <small class="text-muted">
+                                    <strong>Пользователи:</strong> {{ album.userScore }}/10
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% else %}
+                <div class="list-group-item text-center text-muted py-4">
+                    Альбомы не найдены
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="mt-2">
+                            <a href="{{ path('app_album_new') }}" class="btn btn-sm btn-outline-primary">
+                                Создать первый альбом
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
