@@ -11,29 +11,17 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class AlbumService
 {
     function __construct(
-        private string $projectDir,
-        private AlbumRepository $albumRepository,
+        private string                 $projectDir,
+        private AlbumRepository        $albumRepository,
         private EntityManagerInterface $em,
     )
     {
     }
-    private const ALBUM_PHOTO_DIR =  '/upload/images/album/';
-    public function changePhoto(?UploadedFile $photo, int  $albumId): void
-    {
-        if($photo !== null)
-        {
-            $photoDirFullPath = $this->projectDir . $this::ALBUM_PHOTO_DIR;
-            $fileName = md5(uniqid()).'.'.$photo->guessExtension();
-            $photo->move($photoDirFullPath, $fileName);
 
-            $album = $this->albumRepository->find($albumId);
-            $album->setPhotoUrl($this::ALBUM_PHOTO_DIR . $fileName);
+    private const ALBUM_PHOTO_DIR = '/upload/images/album/';
 
-            $this->em->flush();
-        }
-    }
 
-    public function createAlbum(CreateAlbumDto $albumDto) : Album
+    public function createAlbum(CreateAlbumDto $albumDto): Album
     {
         $album = new Album();
         $album
@@ -41,8 +29,12 @@ class AlbumService
             ->setCriticScore($albumDto->criticScore)
             ->setReleaseDate($albumDto->releaseDate);
 
-        foreach ($albumDto->authors as $author){
+        foreach ($albumDto->authors as $author) {
             $album->addAuthor($author);
+        }
+
+        if ($albumDto->cover !== null) {
+            $this->changePhoto($albumDto->cover, $album);
         }
 
         $this->em->persist($album);
@@ -51,23 +43,37 @@ class AlbumService
         return $album;
     }
 
-    public function updateAlbum(Album $album ,CreateAlbumDto $albumDto) : Album
+    public function updateAlbum(Album $album, CreateAlbumDto $albumDto): Album
     {
         $album
             ->setTitle($albumDto->title)
             ->setCriticScore($albumDto->criticScore)
             ->setReleaseDate($albumDto->releaseDate);
 
-        foreach ($album->getAuthors() as $author){
+        foreach ($album->getAuthors() as $author) {
             $album->removeAuthor($author);
         }
 
-        foreach ($albumDto->authors as $author){
+        foreach ($albumDto->authors as $author) {
             $album->addAuthor($author);
+        }
+
+        if ($albumDto->cover !== null) {
+            $this->changePhoto($albumDto->cover, $album);
         }
 
         $this->em->flush();
 
         return $album;
     }
+
+    private function changePhoto(UploadedFile $photo, Album $album): void
+    {
+        $photoDirFullPath = $this->projectDir . $this::ALBUM_PHOTO_DIR;
+        $fileName = md5(uniqid()) . '.' . $photo->guessExtension();
+        $photo->move($photoDirFullPath, $fileName);
+
+        $album->setPhotoUrl($this::ALBUM_PHOTO_DIR . $fileName);
+    }
+
 }

@@ -6,14 +6,6 @@
 {% block body %}
     <h1>Edit Album</h1>
 
-    {% block upload_file %}
-        <form enctype="multipart/form-data" method="post"
-              action="{{ path('app_file_upload_album', {'album_id' : album.id}) }}">
-            <input type="file" name="album_image">
-            <button type="submit">Загрузить фото альбома</button>
-        </form>
-    {% endblock %}
-
     {{ include('album/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('app_album_index') }}">back to list</a>

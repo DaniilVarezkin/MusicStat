@@ -13,11 +13,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/file-upload', name: 'app_file_upload_')]
 class FileUploadController extends AbstractController
 {
-    #[Route(path: '/album/{album_id}', name: 'album', methods: ['POST'])]
-    public function uploadAlbumPhoto(Request $request, int $album_id, AlbumService $albumService): Response
-    {
-        $photo = $request->files->get('album_image');
-        $albumService->changePhoto($photo, $album_id);
-        return new Response(null, Response::HTTP_OK);
-    }
+//    #[Route(path: '/album/{album_id}', name: 'album', methods: ['POST'])]
+//    public function uploadAlbumPhoto(Request $request, int $album_id, AlbumService $albumService): Response
+//    {
+//        $photo = $request->files->get('album_image');
+//        $albumService->changePhoto($photo, $album_id);
+//        return new Response(null, Response::HTTP_OK);
+//    }
 }

@@ -3,8 +3,11 @@
 namespace App\Dto;
 
 use App\Entity\Album;
+use App\Entity\Artist;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateAlbumDto
@@ -26,7 +29,9 @@ class CreateAlbumDto
 
         #[Assert\NotBlank(message: 'Пожалуйста, укажите хотя бы одного автора')]
         #[Assert\Count(min: 1)]
-        public ?Collection             $authors = null
+        public Collection $authors = new ArrayCollection(),
+
+        public UploadedFile|null $cover = null,
     )
     {
     }
@@ -37,7 +42,8 @@ class CreateAlbumDto
             $album->getTitle(),
             $album->getCriticScore(),
             $album->getReleaseDate(),
-            $album->getAuthors()
+            new ArrayCollection($album->getAuthors()->toArray()),
+            null
         );
     }
 }

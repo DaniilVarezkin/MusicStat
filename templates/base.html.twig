@@ -10,6 +10,12 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Bootstrap Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
+        <!-- Select 2 -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+        <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
     {% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -58,12 +64,15 @@
 
 {% block javascripts %}
     <!-- Bootstrap JS -->
+    <!-- jQuery (обязательно для Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const toastElList = document.querySelectorAll('.toast');
             toastElList.forEach(toastEl => {
-                const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                const toast = new bootstrap.Toast(toastEl, {delay: 5000});
                 toast.show();
 
                 // Удаляем тост из DOM после закрытия

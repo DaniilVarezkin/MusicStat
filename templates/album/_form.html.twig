@@ -1,16 +1,27 @@
-
 {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
 
     {% for child in form %}
         {% if child.vars.name != '_token' %}
             <div class="mb-3">
                 {{ form_label(child, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(child, {'attr': {'class': 'form-control'}}) }}
+                {{ form_widget(child) }}
                 {{ form_errors(child, {'attr': {'class': 'invalid-feedback'}}) }}
             </div>
         {% endif %}
     {% endfor %}
 
-<button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+<button class="btn btn-primary">{{ button_label|default('Сохранить') }}</button>
 
 {{ form_end(form) }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Выберите исполнителей',
+            allowClear: true,
+            width: '100%',
+            minimumResultsForSearch: 0
+        });
+    });
+</script>
