@@ -19,7 +19,7 @@ cd MusicStat
 Установите все зависимости проекта:
 
 ``` bash
-composer install 
+composer install --ignore-platform-reqs 
 ```
 
 Для работы с базой данных выполните миграции:
