@@ -1,0 +1,48 @@
+{# templates/album/by_genres.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Альбомы по жанрам{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold mb-4">Альбомы по жанрам</h1>
+            </div>
+        </div>
+
+        {% for genreData in albumsByGenre %}
+            <div class="row g-0 mb-5">
+                <div class="col-12 mb-3">
+                    <h2 class="h3 mb-3 border-bottom pb-2">
+                        {{ genreData.genre.label() }}
+                        <span class="badge bg-secondary ms-2">{{ genreData.albums|length }}</span>
+                    </h2>
+                </div>
+
+                {% for album in genreData.albums %}
+                    <div class="col-lg-2 col-md-3 mx-1">
+                        {% include 'album/common/_album_card_small.html.twig' with { album: album } %}
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            В этом жанре пока нет альбомов
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">
+                        <h4 class="alert-heading">Альбомы не найдены</h4>
+                        <p class="mb-0">Пока нет альбомов в системе</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

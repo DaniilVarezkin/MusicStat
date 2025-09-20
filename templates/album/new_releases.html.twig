@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Новые релизы{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold mb-4">Новые релизы</h1>
+
+                {# Форма фильтров (копия с top.html.twig) #}
+                {% include 'album/common/_filters.html.twig' %}
+            </div>
+        </div>
+
+        <div class="row">
+            {% for album in pagination %}
+                {# Копия карточки альбома #}
+                {% include 'album/common/_album_card.html.twig' with { album: album, loop: loop } %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">
+                        <h4 class="alert-heading">Нет новых релизов</h4>
+                        <p class="mb-0">
+                            Пока новые альбомы не добавлены. Загляните позже!
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {{ include('common/_pagination.html.twig') }}
+    </div>
+{% endblock %}

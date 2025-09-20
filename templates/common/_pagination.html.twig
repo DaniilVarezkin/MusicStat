@@ -1,0 +1,14 @@
+{# Пагинация #}
+        {% if pagination.getTotalItemCount() > pagination.count %}
+            <div class="row mt-5">
+                <div class="col-12">
+                    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+                        <ul class="pagination pagination-lg shadow-sm">
+                            {{ knp_pagination_render(pagination,
+                                '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig'
+                            ) }}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        {% endif %}

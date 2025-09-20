@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="">
-            <i class="bi bi-house-fill"></i> Music Stat
+        <a class="navbar-brand" href="{{ path('app_album_index') }}">
+            <i class="bi bi-music-note-list pe-1">  </i> Music Stat
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -9,21 +9,21 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="">Лучшие альбомы</a>
+                    <a class="nav-link" href="{{ path('app_album_index') }}">Лучшие альбомы</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Новые релизы</a>
+                    <a class="nav-link" href="{{ path('app_album_new_releases') }}">Новые релизы</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Жанры</a>
+                    <a class="nav-link" href="{{ path('app_album_by_genres') }}">Жанры</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_artist_index') }}">Артисты</a>
                 </li>
                 <!-- Админ панель -->
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_album_index') }}">Альбомы</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_artist_index') }}">Артисты</a>
+                        <a class="nav-link" href="{{ path('app_album_new') }}">Добавить альбом</a>
                     </li>
                 {% endif %}
             </ul>

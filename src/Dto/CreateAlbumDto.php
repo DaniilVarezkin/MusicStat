@@ -3,7 +3,7 @@
 namespace App\Dto;
 
 use App\Entity\Album;
-use App\Entity\Artist;
+use App\Enum\GenreType;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +14,9 @@ class CreateAlbumDto
 {
     function __construct(
         #[Assert\NotBlank(message: 'Пожалуйста, укажите название')]
-        public ?string            $title = null,
+        public ?string $title = null,
+
+        public ?string $description = null,
 
         #[Assert\NotBlank(message: 'Пожалуйста, укажите оценку')]
         #[Assert\Range(
@@ -22,7 +24,7 @@ class CreateAlbumDto
             min: 1,
             max: 100
         )]
-        public ?int               $criticScore = null,
+        public ?int $criticScore = null,
 
         #[Assert\NotBlank(message: 'Пожалуйста, укажите дату релиза')]
         public ?DateTimeImmutable $releaseDate = null,
@@ -31,7 +33,22 @@ class CreateAlbumDto
         #[Assert\Count(min: 1)]
         public Collection $authors = new ArrayCollection(),
 
-        public UploadedFile|null $cover = null,
+        #[Assert\NotBlank(message: 'Пожалуйста, укажите хотя бы один жанр')]
+        #[Assert\Count(
+            min: 1,
+            max: 5,
+            minMessage: 'Альбом должен иметь хотя бы один жанр',
+            maxMessage: 'Альбом не может иметь более {{ limit }} жанров'
+        )]
+
+        public array $genres = [],
+
+        #[Assert\Image(
+            maxSize: '5M',
+            mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+            mimeTypesMessage: 'Пожалуйста, загрузите изображение в формате JPEG, PNG или WebP'
+        )]
+        public ?UploadedFile $cover = null,
     )
     {
     }
@@ -40,9 +57,11 @@ class CreateAlbumDto
     {
         return new self(
             $album->getTitle(),
+            $album->getDescription(),
             $album->getCriticScore(),
             $album->getReleaseDate(),
             new ArrayCollection($album->getAuthors()->toArray()),
+            $album->getGenres(),
             null
         );
     }

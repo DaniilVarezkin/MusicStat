@@ -19,3 +19,7 @@ services:
     App\Service\AlbumService:
         arguments:
             $projectDir: '%kernel.project_dir%/public'
+
+    App\Service\ArtistService:
+        arguments:
+            $projectDir: '%kernel.project_dir%/public'

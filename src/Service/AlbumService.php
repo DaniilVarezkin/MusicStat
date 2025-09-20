@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Dto\CreateAlbumDto;
 use App\Entity\Album;
+use App\Enum\GenreType;
 use App\Repository\AlbumRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -12,7 +13,6 @@ class AlbumService
 {
     function __construct(
         private string                 $projectDir,
-        private AlbumRepository        $albumRepository,
         private EntityManagerInterface $em,
     )
     {
@@ -23,11 +23,14 @@ class AlbumService
 
     public function createAlbum(CreateAlbumDto $albumDto): Album
     {
+
         $album = new Album();
         $album
             ->setTitle($albumDto->title)
+            ->setDescription($albumDto->description)
             ->setCriticScore($albumDto->criticScore)
-            ->setReleaseDate($albumDto->releaseDate);
+            ->setReleaseDate($albumDto->releaseDate)
+            ->setGenres($albumDto->genres);
 
         foreach ($albumDto->authors as $author) {
             $album->addAuthor($author);
@@ -47,8 +50,10 @@ class AlbumService
     {
         $album
             ->setTitle($albumDto->title)
+            ->setDescription($albumDto->description)
             ->setCriticScore($albumDto->criticScore)
-            ->setReleaseDate($albumDto->releaseDate);
+            ->setReleaseDate($albumDto->releaseDate)
+            ->setGenres($albumDto->genres);
 
         foreach ($album->getAuthors() as $author) {
             $album->removeAuthor($author);

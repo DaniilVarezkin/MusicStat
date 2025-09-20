@@ -1,0 +1,72 @@
+<form method="get" action="{{ path(app.request.attributes.get('_route')) }}"
+      class="d-flex flex-wrap align-items-center gap-3 mb-4">
+
+    <!-- Поиск -->
+    <div class="input-group" style="max-width: 320px;">
+        <input type="text"
+               name="search"
+               class="form-control"
+               placeholder="Поиск по названию..."
+               value="{{ currentSearch }}">
+        <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+    </div>
+
+    <!-- Фильтр по году -->
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                data-bs-toggle="dropdown">
+            {{ currentYear ? currentYear : 'Все годы' }}
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item"
+                   href="{{ path(app.request.attributes.get('_route'), {genre: currentGenre, search: currentSearch}) }}">
+                    Все годы
+                </a>
+            </li>
+            {% for year in availableYears %}
+                <li>
+                    <a class="dropdown-item"
+                       href="{{ path(app.request.attributes.get('_route'), {year: year, genre: currentGenre, search: currentSearch}) }}">
+                        {{ year }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Фильтр по жанру -->
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                data-bs-toggle="dropdown">
+            {{ currentGenre and currentGenre != 'all'
+            ? enum('App\\Enum\\GenreType').from(currentGenre).label
+            : 'Все жанры' }}
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item"
+                   href="{{ path(app.request.attributes.get('_route'), {year: currentYear, search: currentSearch}) }}">
+                    Все жанры
+                </a>
+            </li>
+            {% for genreKey, genreName in genres %}
+                <li>
+                    <a class="dropdown-item"
+                       href="{{ path(app.request.attributes.get('_route'), {year: currentYear, genre: genreName.value, search: currentSearch}) }}">
+                        {{ genreName.label }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Сброс -->
+    {% if currentYear or (currentGenre and currentGenre != 'all') or currentSearch %}
+        <a href="{{ path(app.request.attributes.get('_route')) }}" class="btn btn-outline-danger">
+            <i class="bi bi-x-circle"></i> Сбросить
+        </a>
+    {% endif %}
+</form>

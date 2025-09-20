@@ -2,11 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Album;
-use App\Entity\Artist;
-use App\Entity\Song;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Dto\CreateArtistDto;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,15 +15,30 @@ class ArtistType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('bio')
-        ;
+            ->add('name', TextType::class, [
+                'label' => 'Имя исполнителя',
+                'attr' => ['class' => 'form-control'],
+            ])
+            ->add('bio', TextareaType::class, [
+                'label' => 'Биография',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 5,
+                    'placeholder' => 'Краткая информация об исполнителе...',
+                ],
+            ])
+            ->add('cover', FileType::class, [
+                'required' => false,
+                'label' => 'Обложка',
+                'attr' => ['class' => 'form-control'],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Artist::class,
+            'data_class' => CreateArtistDto::class,
         ]);
     }
 }

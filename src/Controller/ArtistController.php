@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Dto\CreateArtistDto;
 use App\Entity\Artist;
 use App\Form\ArtistType;
 use App\Repository\ArtistRepository;
+use App\Service\ArtistService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,30 +19,45 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ArtistController extends AbstractController
 {
     #[Route(name: 'app_artist_index', methods: ['GET'])]
-    public function index(ArtistRepository $artistRepository): Response
-    {
+    public function index(
+        Request $request,
+        ArtistRepository $artistRepository,
+        PaginatorInterface $paginator
+    ): Response {
+        $search = $request->query->get('search');
+        $page = $request->query->getInt('page', 1);
+
+        $query = $artistRepository->findArtistsQuery($search);
+
+        $pagination = $paginator->paginate(
+            $query,
+            $page,
+            10 // исполнителей на страницу
+        );
+
         return $this->render('artist/index.html.twig', [
-            'artists' => $artistRepository->findAll(),
+            'pagination' => $pagination,
+            'currentSearch' => $search,
         ]);
     }
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/new', name: 'app_artist_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, ArtistService $artistService): Response
     {
-        $artist = new Artist();
-        $form = $this->createForm(ArtistType::class, $artist);
+        $artistDto = new CreateArtistDto();
+        $form = $this->createForm(ArtistType::class, $artistDto);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($artist);
-            $entityManager->flush();
+            $artist = $artistService->createArtist($artistDto);
 
-            return $this->redirectToRoute('app_artist_index', [], Response::HTTP_SEE_OTHER);
+
+            return $this->redirectToRoute('app_artist_show', ['id' => $artist->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('artist/new.html.twig', [
-            'artist' => $artist,
+            'artist' => $artistDto,
             'form' => $form,
         ]);
     }
@@ -54,15 +72,15 @@ final class ArtistController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id}/edit', name: 'app_artist_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Artist $artist, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Artist $artist, ArtistService $artistService): Response
     {
-        $form = $this->createForm(ArtistType::class, $artist);
+        $form = $this->createForm(ArtistType::class, CreateArtistDto::fromEntity($artist));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $artistService->updateArtist($form->getData(),  $artist);
 
-            return $this->redirectToRoute('app_artist_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_artist_show', ['id' => $artist->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('artist/edit.html.twig', [

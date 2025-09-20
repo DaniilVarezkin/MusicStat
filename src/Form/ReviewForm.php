@@ -20,19 +20,12 @@ class ReviewForm extends AbstractType
                 'label' => 'Оценка',
                 'attr' => [
                     'min' => 1,
-                    'max' => 10,
-                    'class' => 'form-control',
-                    'placeholder' => 'От 1 до 100'
+                    'max' => 100,
                 ],
             ])
             ->add('text', TextareaType::class, [
                 'label' => 'Текст отзыва',
                 'required' => false,
-                'attr' => [
-                    'rows' => 4,
-                    'class' => 'form-control',
-                    'placeholder' => 'Поделитесь вашим мнением об альбоме...'
-                ]
             ]);
     }
 

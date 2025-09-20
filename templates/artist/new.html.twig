@@ -1,11 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Artist{% endblock %}
+{% block title %}Добавления исполнителя{% endblock %}
 
 {% block body %}
-    <h1>Create new Artist</h1>
+    <div class="container my-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <h1 class="h3 mb-0 mt-2 te fw-semibold text-center">Добавление альбома</h1>
+                    </div>
 
-    {{ include('artist/_form.html.twig') }}
-
-    <a href="{{ path('app_artist_index') }}">back to list</a>
+                    <div class="card-body">
+                        {{ include('artist/_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
+

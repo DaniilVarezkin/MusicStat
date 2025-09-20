@@ -8,11 +8,13 @@ use App\Entity\Review;
 use App\Entity\User;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 readonly class ReviewService
 {
     function __construct(
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private Security $security,
     )
     {
     }
@@ -44,6 +46,19 @@ readonly class ReviewService
         $this->em->flush();
 
         $this->recalculateAlbumScore($album);
+    }
+
+    public function deleteReview(Review $review): void
+    {
+        if($this->security->isGranted('ROLE_ADMIN')
+            || $this->security->getUser()->getId() === $review->getAuthor()->getId()) {
+
+            $album = $review->getAlbum();
+            $this->em->remove($review);
+            $this->em->flush();
+
+            $this->recalculateAlbumScore($album);
+        }
     }
 
     public function recalculateAlbumScore(Album $album): void

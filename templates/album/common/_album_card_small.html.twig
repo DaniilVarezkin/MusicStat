@@ -1,0 +1,36 @@
+{# templates/album/common/_album_card_small.html.twig #}
+
+<div class=" col-sm-12 mb-4">
+    <div class="card h-100 border-0">
+        <a href="{{ path('app_album_show', {'id': album.id}) }}">
+            <img src="{{ album.photoUrl }}"
+                 alt="{{ album.title }}"
+                 class="card-img-top rounded"
+                 style="height: 200px; object-fit: cover;"
+                 onerror="this.src='{{ absolute_url(asset('static/images/no_image.webp')) }}'">
+        </a>
+
+        <div class="card-body p-2">
+            <a href="{{ path('app_album_show', {'id': album.id}) }}"
+               class="text-decoration-none text-dark">
+                <h6 class="mb-1 text-truncate">{{ album.title }}</h6>
+            </a>
+
+            {% if album.authors is not empty %}
+                <small class="text-muted d-block text-truncate">
+                    {% for author in album.authors|slice(0, 2) %}
+                        {{ author.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </small>
+            {% endif %}
+
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <div>
+                    <span class="badge bg-light text-success">Critic: {{ album.criticScore }}</span>
+                    <span class="badge bg-light text-primary ms-1">User: {{ album.userScore }}</span>
+                </div>
+                <small class="text-muted">{{ album.releaseDate ? album.releaseDate|date('Y') }}</small>
+            </div>
+        </div>
+    </div>
+</div>

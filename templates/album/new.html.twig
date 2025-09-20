@@ -1,11 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Album{% endblock %}
+{% block title %}Добавление альбома{% endblock %}
 
 {% block body %}
-    <h1>Create new Album</h1>
+    <div class="container my-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
 
-    {{ include('album/_form.html.twig') }}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white border-0">
+                        <h1 class="h3 mb-0 mt-2 te fw-semibold text-center">Добавление альбома</h1>
+                    </div>
 
-    <a href="{{ path('app_album_index') }}">back to list</a>
+                    <div class="card-body">
+                        {{ include('album/_form.html.twig') }}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 {% endblock %}
+

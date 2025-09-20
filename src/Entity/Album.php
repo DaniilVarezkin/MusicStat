@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Common\Trait\HasPhotoUrlTrait;
+use App\Enum\GenreType;
 use App\Repository\AlbumRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
@@ -40,6 +42,13 @@ class Album
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'album')]
     private Collection $reviews;
+
+
+    #[ORM\Column]
+    private array $genres = [];
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     public function __construct()
     {
@@ -151,6 +160,119 @@ class Album
                 $review->setAlbum(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return array<GenreType>
+     */
+    public function getGenres(): array
+    {
+        return array_map(static fn($genre) => GenreType::from($genre),$this->genres);
+    }
+
+    /**
+     * @param array<GenreType> $genres
+     */
+    public function setGenres(array $genres): static
+    {
+        $this->genres = $genres;
+        return $this;
+    }
+
+    /**
+     * Добавляет один жанр
+     */
+    public function addGenre(GenreType $genre): static
+    {
+        if (!in_array($genre, $this->genres, true)) {
+            $this->genres[] = $genre;
+            $this->genres = array_unique($this->genres);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Удаляет жанр
+     */
+    public function removeGenre(GenreType $genre): static
+    {
+        $key = array_search($genre, $this->genres, true);
+        if ($key !== false) {
+            unset($this->genres[$key]);
+            $this->genres = array_values($this->genres);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Проверяет, есть ли указанный жанр
+     */
+    public function hasGenre(GenreType $genre): bool
+    {
+        return in_array($genre, $this->genres, true);
+    }
+
+    /**
+     * Возвращает русские названия жанров
+     *
+     * @return array<string>
+     */
+    public function getGenreLabels(): array
+    {
+        $labels = [];
+        foreach ($this->genres as $genre) {
+            $labels[] = $genre->label();
+        }
+        return $labels;
+    }
+
+    /**
+     * Возвращает строку с русскими названиями жанров через запятую
+     */
+    public function getGenresAsString(): string
+    {
+        return implode(', ', $this->getGenreLabels());
+    }
+
+    /**
+     * Возвращает массив строковых значений жанров
+     *
+     * @return array<string>
+     */
+    public function getGenresAsStrings(): array
+    {
+        return array_map(fn(GenreType $genre) => $genre->value, $this->genres);
+    }
+
+    /**
+     * Устанавливает жанры из массива строк
+     *
+     * @param array<string> $genreStrings
+     */
+    public function setGenresFromStrings(array $genreStrings): static
+    {
+        $this->genres = [];
+        foreach ($genreStrings as $genreString) {
+            $genre = GenreType::tryFrom($genreString);
+            if ($genre !== null) {
+                $this->addGenre($genre);
+            }
+        }
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

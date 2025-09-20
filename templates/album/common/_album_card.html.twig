@@ -1,0 +1,81 @@
+<div class="col-12 mb-3">
+    <a href="{{ path('app_album_show', {'id': album.id}) }}" class="text-decoration-none text-reset">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h2 class="card-title h5 mb-0">
+                       {{ album.title }}
+                    </h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <div class="img-thumbnail rounded overflow-hidden"
+                             style="width: 200px; height: 200px;">
+                            <img src="{{ album.photoUrl }}"
+                                 alt="{{ album.title }}"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover; object-position: center;"
+                                 onerror="this.src='{{ absolute_url(asset('static/images/no_image.webp')) }}'">
+                        </div>
+                    </div>
+
+                    <div class="col-md-10">
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-2"> Исполнители:
+                                <small class="text-muted">
+                                    {% if album.authors is not empty %}
+                                        {% for author in album.authors %}
+                                            {{ author.name }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        Исполнитель не указан
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    {{ album.releaseDate ? album.releaseDate|date('d.m.Y') : 'Дата не указана' }}
+                                </small>
+                            </div>
+                        </div>
+
+                        {% if album.genres is not empty %}
+                            <div class="my-2">
+                                <small class="text-muted">Жанры:</small>
+                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                    {% for genre in album.genres %}
+                                        <span class="badge bg-secondary">{{ genre.label() }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Оценка пользователей</small>
+                                <span class="fs-5 fw-bold text-secondary">{{ album.userScore }}</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar"
+                                     style="width: {{ album.userScore }}%; background-color: hsl({{ (album.userScore / 100) * 120 }}, 100%, 35%)"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Оценка критиков</small>
+                                <span class="fs-5 fw-bold text-secondary">{{ album.criticScore }}</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar"
+                                     style="width: {{ album.criticScore }}%; background-color: hsl({{ (album.criticScore / 100) * 120 }}, 100%, 35%)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>

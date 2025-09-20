@@ -4,39 +4,65 @@
 
 {% block body %}
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card border-0 bg-transparent">
-                    <div class="ratio ratio-1x1" style="width: 400px; height: 400px;">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card bg-transparent">
+                    <div class="ratio ratio-1x1">
                         <img src="{{ album.photoUrl }}"
                              alt="{{ album.title }}"
-                             class="img-fluid object-fit-cover rounded"
-                             style="width: 100%; height: 100%;"
-                             onerror="this.src='https://via.placeholder.com/300x300/cccccc/999999?text=No+Image'">
+                             class="img-fluid object-fit-cover rounded shadow-sm"
+                             onerror="this.src='{{ absolute_url(asset('static/images/no_image.webp')) }}'">
+                    </div>
+                    <div class="m-3 mb-2">
+                        <div class="mb-3">
+                            <h6 class="text-muted">Жанр</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for genre in album.genres %}
+                                    <span class="badge bg-secondary fs-6 px-3 py-2">{{ genre.label }}</span>
+                                {% else %}
+                                    <p class="text-muted">Не указаны</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="text-muted">Исполнители</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for author in album.authors %}
+                                    <a href="{{ path('app_artist_show', {'id': author.id}) }}">
+                                        <span class="badge bg-secondary fs-6 px-3 py-2">{{ author.name }}</span>
+                                    </a>
+                                {% else %}
+                                    <p class="text-muted">Не указаны</p>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header align-items-center">
-                        <h1 class="h3 mb-0">{{ album.title }}</h1>
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <h1 class="h3 fw-bold my-3 text-primary">
+                        {{ album.title }}
+                        </h1>
                     </div>
 
                     <div class="card-body">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="text-center p-3 bg-light rounded">
-                                    <h5 class="text-muted">Оценка критиков</h5>
-                                    <div class="display-4 fw-bold text-primary">
+                        <div class="row text-center mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="p-3 bg-light rounded h-100">
+                                    <h6 class="text-muted mb-2">Оценка критиков</h6>
+                                    <div class="display-5 fw-bold" style="color: hsl({{ (album.criticScore / 100) * 120 }}, 100%, 35%)">
                                         {{ album.criticScore }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="text-center p-3 bg-light rounded">
-                                    <h5 class="text-muted">Оценка пользователей</h5>
-                                    <div class="display-4 fw-bold text-success">
+                            <div class="col-md-6 mb-3">
+                                <div class="p-3 bg-light rounded h-100">
+                                    <h6 class="text-muted mb-2">Оценка пользователей</h6>
+                                    <div class="display-5 fw-bold" style="color: hsl({{ (album.userScore / 100) * 120 }}, 100%, 35%)">
                                         {{ album.userScore }}
                                     </div>
                                 </div>
@@ -44,37 +70,28 @@
                         </div>
 
                         <div class="mb-3">
-                            <h5 class="text-muted">Дата выпуска</h5>
-                            <p class="fs-5">{{ album.releaseDate ? album.releaseDate|date('d.m.Y') : 'Не указана' }}</p>
+                            <h6 class="text-muted">Описание</h6>
+                            <p class="fs-5">{{ album.description ? album.description: 'Не указано' }}</p>
                         </div>
 
                         <div class="mb-3">
-                            <h5 class="text-muted">Исполнители</h5>
-                            <div class="d-flex flex-wrap gap-2">
-                                {% for author in album.authors %}
-                                    <span class="badge bg-secondary fs-6 px-3 py-2">
-                                {{ author.name }}
-                        </span>
-                                {% else %}
-                                    <p class="text-muted">Не указаны</p>
-                                {% endfor %}
-                            </div>
+                            <h6 class="text-muted">Дата выпуска</h6>
+                            <p class="fs-5">{{ album.releaseDate ? album.releaseDate|date('d.m.Y') : 'Не указана' }}</p>
                         </div>
+
+
                     </div>
 
-                    <div class="card-footer">
-                        <div class="d-flex gap-2">
-                            <a href="{{ path('app_album_index') }}" class="btn btn-outline-secondary">
-                                ← Назад к списку
-                            </a>
 
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('app_album_edit', {'id': album.id}) }}" class="btn btn-primary">
-                                    Редактировать
-                                </a>
-                                {{ include('album/_delete_form.html.twig') }}
-                            {% endif %}
-                        </div>
+                </div>
+                <div class="card-footer bg-white pt-4">
+                    <div class="d-flex gap-2">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_album_edit', {'id': album.id}) }}" class="btn btn-primary">
+                                Редактировать
+                            </a>
+                            {{ include('album/_delete_form.html.twig') }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -84,81 +101,85 @@
         {# Секция отзывов #}
         <div class="row mt-5">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="h5 mb-0">Отзывы</h3>
-                        <span class="badge bg-primary">{{ album.reviews|length }} отзывов</span>
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-white border-0">
+                        <h3 class="h4 mb-0 fw-semibold">Отзывы</h3>
+                        <h5><span class="badge bg-primary">{{ album.reviews|length }} отзывов</span></h5>
                     </div>
 
                     <div class="card-body">
                         {# Форма добавления отзыва #}
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <div class="mb-4 p-4 bg-light rounded">
-                                <h5 class="mb-3">Добавить отзыв</h5>
-                                {{ form_start(review_form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+                            <div class="card shadow-sm border-0 mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title d-flex align-items-center mb-4 fw-semibold">
+                                        Добавить отзыв
+                                    </h5>
 
-                                {# Поле оценки #}
-                                <div class="row">
-                                    <div class="col-md-3 mb-3">
-                                        {{ form_label(review_form.score) }}
-                                        {{ form_widget(review_form.score, {'attr': {'class': 'form-control' ~ (review_form.score.vars.errors|length ? ' is-invalid' : '')}}) }}
+                                    {{ form_start(review_form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
 
-                                        {# Отображение ошибок для оценки #}
-                                        {% if review_form.score.vars.errors|length %}
-                                            <div class="invalid-feedback d-block">
-                                                {% for error in review_form.score.vars.errors %}
-                                                    {{ error.message }}
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-
-                                        {{ form_help(review_form.score) }}
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            {{ form_row(review_form.score, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'placeholder': 'Оценка от 1 до 100'
+                                                },
+                                                'label_attr': {'class': 'fw-semibold'}
+                                            }) }}
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            {{ form_row(review_form.text, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'rows': 4,
+                                                    'placeholder': 'Поделитесь вашим мнением об альбоме...'
+                                                },
+                                                'label_attr': {'class': 'fw-semibold'}
+                                            }) }}
+                                        </div>
                                     </div>
 
-                                    {# Поле текста #}
-                                    <div class="col-md-12 mb-3">
-                                        {{ form_label(review_form.text) }}
-                                        {{ form_widget(review_form.text, {'attr': {'class': 'form-control' ~ (review_form.text.vars.errors|length ? ' is-invalid' : '')}}) }}
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            Оставить отзыв
+                                        </button>
 
-                                        {# Отображение ошибок для текста #}
-                                        {% if review_form.text.vars.errors|length %}
-                                            <div class="invalid-feedback d-block">
-                                                {% for error in review_form.text.vars.errors %}
-                                                    {{ error.message }}
-                                                {% endfor %}
-                                            </div>
+                                        {% if user_review != null %}
+                                            <a href="{{ path('review_delete', { 'review': user_review.id }) }}"
+                                               class="btn btn-outline-danger"
+                                               title="Удалить отзыв">
+                                                <i class="bi bi-trash me-1"></i>
+                                                <span class="d-none d-md-inline">Удалить</span>
+                                            </a>
                                         {% endif %}
                                     </div>
+
+                                    {{ form_end(review_form) }}
                                 </div>
-
-                                <button type="submit" class="btn btn-primary">Оставить отзыв</button>
-                                {{ form_end(review_form) }}
                             </div>
                         {% else %}
-                            <div class="alert alert-info">
-                                <a href="{{ path('app_login') }}" class="alert-link">Войдите</a>, чтобы оставить отзыв
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <div>
+                                    <a href="{{ path('app_login') }}" class="alert-link">Войдите</a>, чтобы оставить отзыв
+                                </div>
                             </div>
                         {% endif %}
+
 
                         {# Список отзывов #}
                         {% if album.reviews|length > 0 %}
                             <div class="reviews-list">
                                 {% for review in album.reviews %}
-                                    <div class="review-item border-bottom pb-3 mb-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <strong class="text-primary">{{ review.author.email }}</strong>
-                                                <small class="text-muted ms-2">{{ review.createdAt|date('d.m.Y H:i') }}</small>
-                                            </div>
-                                            <h4><span class="badge bg-primary">{{ review.score }}</span></h4>
-                                        </div>
-                                        <p class="mb-0">{{ review.text }}</p>
-                                    </div>
+                                    {% include('album/common/_review_card.html.twig') with { review } %}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            <div class="text-center text-muted py-4">
-                                <p>Пока нет отзывов. Будьте первым!</p>
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-chat-quote fs-1 opacity-50 mb-3"></i>
+                                <p class="fs-5 mb-2">Пока нет отзывов</p>
+                                <p class="text-muted">Будьте первым, кто оставит отзыв!</p>
                             </div>
                         {% endif %}
                     </div>

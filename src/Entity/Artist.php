@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Common\Trait\HasPhotoUrlTrait;
 use App\Repository\ArtistRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ArtistRepository::class)]
 class Artist
 {
+    use HasPhotoUrlTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -28,16 +30,10 @@ class Artist
     #[ORM\ManyToMany(targetEntity: Album::class, mappedBy: 'authors')]
     private Collection $albums;
 
-    /**
-     * @var Collection<int, Song>
-     */
-    #[ORM\ManyToMany(targetEntity: Song::class, mappedBy: 'authors')]
-    private Collection $songs;
 
     public function __construct()
     {
         $this->albums = new ArrayCollection();
-        $this->songs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,30 +92,30 @@ class Artist
         return $this;
     }
 
-    /**
-     * @return Collection<int, Song>
-     */
-    public function getSongs(): Collection
-    {
-        return $this->songs;
-    }
-
-    public function addSong(Song $song): static
-    {
-        if (!$this->songs->contains($song)) {
-            $this->songs->add($song);
-            $song->addAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSong(Song $song): static
-    {
-        if ($this->songs->removeElement($song)) {
-            $song->removeAuthor($this);
-        }
-
-        return $this;
-    }
+//    /**
+//     * @return Collection<int, Song>
+//     */
+//    public function getSongs(): Collection
+//    {
+//        return $this->songs;
+//    }
+//
+//    public function addSong(Song $song): static
+//    {
+//        if (!$this->songs->contains($song)) {
+//            $this->songs->add($song);
+//            $song->addAuthor($this);
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function removeSong(Song $song): static
+//    {
+//        if ($this->songs->removeElement($song)) {
+//            $song->removeAuthor($this);
+//        }
+//
+//        return $this;
+//    }
 }
