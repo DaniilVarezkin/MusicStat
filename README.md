@@ -7,7 +7,7 @@
 Склонируйте репозиторий на локальную машину:
 
 ``` bash
-[git clone https://github.com/DaniilVarezkin/MusicStat.git](https://github.com/DaniilVarezkin/MusicStat.git)
+git clone https://github.com/DaniilVarezkin/MusicStat.git
 ```
 
 Перейдите в папку проекта:
