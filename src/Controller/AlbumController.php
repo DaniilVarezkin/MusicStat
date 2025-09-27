@@ -206,7 +206,7 @@ final class AlbumController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    #[Route('/{id}', name: 'app_album_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'app_album_delete', methods: ['POST'])]
     public function delete(Request $request, Album $album, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $album->getId(), $request->getPayload()->getString('_token'))) {
